@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from reddit.models import Item
+from reddit.models import Articles
 
 
-class ItemSerializer(serializers.ModelSerializer):
+class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Item
+        model = Articles
         fields = '__all__'
     
