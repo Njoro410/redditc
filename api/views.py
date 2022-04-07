@@ -1,17 +1,31 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from reddit.models import Item
-from .serializers import ItemSerializer
+from reddit.models import Articles, Rooms
+from .serializers import ArticleSerializer, RoomSerializer
 
 @api_view(['GET'])
-def getData(request):
-    items = Item.objects.all()
-    serializer = ItemSerializer(items, many = True)
+def getArticles(request):
+    articles = Articles.objects.all()
+    serializer = ArticleSerializer(articles, many = True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def getRooms(request):
+    rooms = Rooms.objects.all()
+    serializer = RoomSerializer(rooms, many = True)
     return Response(serializer.data)
 
 @api_view(['POST'])
+def roomCreate(request):
+    serializer = RoomSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
 def articleCreate(request):
-    serializer = ItemSerializer(data=request.data)
+    serializer = ArticleSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
@@ -19,21 +33,21 @@ def articleCreate(request):
 
 @api_view(['GET'])
 def articleDetail(request,pk):
-    item = Item.objects.get(id=pk)
-    serializer = ItemSerializer(item, many = False)
+    article = Articles.objects.get(id=pk)
+    serializer = ArticleSerializer(article, many = False)
     return Response(serializer.data)
 
 
 @api_view(['POST'])
 def articleUpdate(request,pk):
-    item = Item.objects.get(id=pk)
-    serializer = ItemSerializer(instance=item,data=request.data)
+    article = Articles.objects.get(id=pk)
+    serializer = ArticleSerializer(instance=article,data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
 
 @api_view(['DELETE'])
 def articleDelete(request,pk):
-    item = Item.objects.get(id=pk)
-    item.delete()
+    article = Articles.objects.get(id=pk)
+    article.delete()
     return Response('deleted successfully')
